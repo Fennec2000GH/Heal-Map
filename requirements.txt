@@ -1,0 +1,8 @@
+googlemaps
+influxdb
+matplotlib
+numpy
+pandas
+plotly
+spacy
+streamlit
