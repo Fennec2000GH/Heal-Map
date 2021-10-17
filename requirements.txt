@@ -8,4 +8,6 @@ pandas
 plotly
 selenium
 spacy
+spacy-streamlit
 streamlit
+streamlit-folium
