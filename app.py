@@ -12,8 +12,12 @@ from pprint import pprint
 
 #region
 # environment variables
-load_dotenv()
-API_KEY = os.getenv(key='API_KEY')
+try:
+    global API_KEY
+    load_dotenv()
+    API_KEY = os.getenv(key='API_KEY')
+except:
+    pass
 
 # page configuration
 st.set_page_config(
@@ -31,7 +35,7 @@ st.write('![language](https://img.shields.io/badge/language-python-yellow?style=
 '![google](https://img.shields.io/badge/google-Geocoding-blue?style=flat-square&logo=appveyor)' +
 '![google](https://img.shields.io/badge/google-Places-crimson?style=flat-square&logo=appveyor)' +
 '![google](https://img.shields.io/badge/google-Distance%20Matrix-goldenrod?style=flat-square&logo=appveyor)' +
-'[![Star](https://img.shields.io/github/stars/Fennec2000GH/Heal-Map.svg?logo=github&style=social)](https://gitHub.com/Fennec2000GH/IntelliVision)')
+'[![Star](https://img.shields.io/github/stars/Fennec2000GH/Heal-Map.svg?logo=github&style=social)](https://gitHub.com/Fennec2000GH/Heal-Map)')
 #endregion
 
 # geocoding
