@@ -1,10 +1,10 @@
 import os
-try:
-    import mordecai
-except:
-    os.system(command='python3.9 -m spacy download en_core_web_lg')
+# try:
+#     import mordecai
+# except:
+#     os.system(command='python3.9 -m spacy download en_core_web_lg')
 
-import googlemaps, folium, numpy as np, pandas as pd, streamlit as st, streamlit_folium
+import googlemaps, folium, numpy as np, pandas as pd, spacy, spacy_streamlit, streamlit as st, streamlit_folium
 import plotly.express as px, plotly.graph_objects as go
 
 from dotenv import load_dotenv
@@ -36,6 +36,11 @@ st.write('![language](https://img.shields.io/badge/language-python-yellow?style=
 
 # geocoding
 gmaps = googlemaps.Client(key=API_KEY)
+def geocode_to_coordinates(text: str):
+    geocode_result = gmaps.geocode(text)
+    lat, lng = tuple(geocode_result[0]['geometry']['location'].values())
+    return lat, lng
+
 st.header(body='Find locations near me')
 
 location = st.text_input(label='Location', help='Input your address or identifiable location.')
@@ -54,8 +59,7 @@ category = st.selectbox(
 if st.button(label='🔍'):
     
     # geocode results for given location
-    geocode_result = gmaps.geocode(location)
-    lat, lng = tuple(geocode_result[0]['geometry']['location'].values())
+    lat, lng = geocode_to_coordinates(text=location)
     st.write(lat, lng)
 
     # found destinations
@@ -125,18 +129,34 @@ if st.button(label='🔍'):
 
 #region
 # geoparsing
-st.header(body='Parse Places from Text')
+st.header(body='Parse places from text')
 # geo = mordecai.Geoparser()
 
 geo_text = st.text_input(label='Text', help='Input text here.')
+nlp = spacy.load(name='en_core_web_lg')
+colors = dict({
+    'ORG': 'linear-gradient(90deg, red, blue)',
+    'LOC': 'linear-gradient(90deg, green, yellow)',
+})
+options = dict({'ents': list(['ORG', 'LOC']), 'colors': colors})
+
 if st.button(label='🌎'):
     
 # geoparse_df = pd.DataFrame(data=geo.geoparse(geo_text))
 # st.dataframe(data=geoparse_df)
+    doc = nlp(text=geo_text)
+    spacy_streamlit.visualize_ner(doc=doc, labels=options['ents'])
+    lat, lng = geocode_to_coordinates(text=doc.ents[0][0])
+    m = folium.Map(location=np.asarray(a=list([lat, lng])), zoom_start=15, tiles='Stamen Terrain')
 
-    geocode_result = gmaps.geocode(geo_text)
-    lat, lng = tuple(geocode_result[0]['geometry']['location'].values())
-    m = folium.Map(location=np.asarray(a=list([lat, lng])), zoom_start=15)
+    for location in list(filter(lambda x: x in set(options['ents']), doc.ents)):
+        st.write(location)
+        folium.Marker(
+            location=geocode_to_coordinates(text=location),
+            popup=location,
+            icon=folium.Icon(color='green', icon="info-sign"),
+        ).add_to(m)
+
     streamlit_folium.folium_static(fig=m)
 
 #endregion
