@@ -1,8 +1,11 @@
+folium
 googlemaps
 influxdb
 matplotlib
+mordecai
 numpy
 pandas
 plotly
+selenium
 spacy
 streamlit
