@@ -16,6 +16,3 @@ Filter through all available locations visually to pinpoint the locations with s
 2. (Optional) Create virtual environment with `virtualenv venv` or `python3.X -m venv ./venv` with a custom Python installation.
 3. `pip install -r requirements.txt`
 4. `streamlit run app.py`
-
-## Web App 🌐
-Check out the equivalent hosted [web application]()
